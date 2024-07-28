@@ -1,20 +1,36 @@
 from pymongo import MongoClient
 
-# Step 1: Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
+def connect_to_mongo():
+    # Connect to MongoDB server running on localhost at the default port 27017
+    client = MongoClient('mongodb://localhost:27017/')
+    return client
 
-# Step 2: Access the database 'db'
-db = client['database']
+def get_collection(client, db_name, collection_name):
+    # Access the specified database and collection
+    db = client[db_name]
+    collection = db[collection_name]
+    return collection
 
-# Step 3: Access the collection 'sample_candidate_data'
-collection = db['sample_candidate_data']
+def fetch_documents(collection):
+    # Retrieve documents from the collection
+    documents = collection.find()
+    return documents
 
-# Step 4: Query the collection (Example: Fetch all documents)
-candidates = list(collection.find())
+def main():
+    # Database and collection names
+    db_name = 'database'
+    collection_name = 'sample_candidate_data'
 
-# Print the fetched candidate profiles
-for candidate in candidates:
-    print(candidate)
+    try:
+        client = connect_to_mongo()
+        collection = get_collection(client, db_name, collection_name)
+        documents = fetch_documents(collection)
 
-# Optional: Close the connection
-client.close()
+        # Print documents
+        for doc in documents:
+            print(doc)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    main()
